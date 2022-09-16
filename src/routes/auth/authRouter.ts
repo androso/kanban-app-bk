@@ -2,6 +2,7 @@ import express from "express";
 import {
 	findUserByEmail,
 	getNewId,
+	userExists,
 	writeJSONFile,
 } from "../../helpers/helpers.js";
 import users from "../../data/users.json";
@@ -26,35 +27,32 @@ authRouter
 	})
 	.post(async (req, res) => {
 		const { email, password } = req.body;
-		if (email && password) {
-			// check if we already have a user with that email
-			let userExists;
-			findUserByEmail(email, async (err: Error | null, user: User) => {
-				if (err) {
-					console.log("error while looking up database");
-					res.redirect("/register");
-				} else if (user) {
-					console.log("Email already registered");
-					res.redirect("/login");
-				} else {
-					// get id
-					const userId = getNewId(users);
-					const salt = await bcrypt.genSalt(10);
-					const hashedPassword = await bcrypt.hash(password, salt);
 
-					const newUser = {
-						id: userId,
-						email,
-						password: hashedPassword,
-					};
-					//save to db
-					users.push(newUser);
-					writeJSONFile(usersFilename, users);
-					console.log("user creted correctly");
-					console.log(newUser);
-					res.redirect("/login");
-				}
-			});
+		// check if we already have a user with that email
+		try {
+			const user = await userExists(email);
+			if (user) {
+				console.log("user already exists!");
+				res.redirect("/users/login");
+			} else {
+				const userId = getNewId(users);
+				const salt = await bcrypt.genSalt(10);
+				const hashedPassword = await bcrypt.hash(password, salt);
+
+				const newUser = {
+					id: userId,
+					email,
+					password: hashedPassword,
+				};
+				//save to db
+				users.push(newUser);
+				writeJSONFile(usersFilename, users);
+				console.log("user created correctly");
+				console.log(newUser);
+				res.redirect("/login");
+			}
+		} catch (e) {
+			console.error(e);
 		}
 	});
 
