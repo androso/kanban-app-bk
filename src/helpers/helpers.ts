@@ -1,7 +1,7 @@
 import fs from "fs";
 import { User } from "../types/types";
-import users from "../data/db.json";
-
+import usersData from "../data/db.json";
+const users = usersData as unknown as User[];
 const getNewId = (array: User[]) => {
 	if (array.length > 0) {
 		return array[array.length - 1].id + 1;
@@ -10,8 +10,8 @@ const getNewId = (array: User[]) => {
 	}
 };
 
-const userExists = async (username: string) => {
-	return await users.find((user) => user.username === username);
+const userExists = async (email: string) => {
+	return await users.find((user) => user.email === email);
 };
 
 const findById = function (
@@ -28,12 +28,12 @@ const findById = function (
 	});
 };
 
-const findByUsername = function (username: string, cb: any) {
+const findByEmail = function (email: string, cb: any) {
 	process.nextTick(function () {
 		for (var i = 0, len = users.length; i < len; i++) {
 			var record = users[i];
-			if (record.username === username) {
-				console.log(`Username with username ${record.username} found!`);
+			if (record.email === email) {
+				console.log(`User with email ${record.email} found!`);
 				console.log(`${JSON.stringify(record)}`);
 				return cb(null, record);
 			}
@@ -50,6 +50,6 @@ export default {
 	getNewId,
 	writeJSONFile,
 	userExists,
-	findByUsername,
+	findByEmail,
 	findById,
 };
