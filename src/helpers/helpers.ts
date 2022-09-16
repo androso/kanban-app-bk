@@ -1,55 +1,55 @@
-// import fs from "fs";
-// import { User } from "../types/types";
-// import usersData from "../data/db.json";
-// const users = usersData as unknown as User[];
-// const getNewId = (array: User[]) => {
-// 	if (array.length > 0) {
-// 		return array[array.length - 1].id + 1;
-// 	} else {
-// 		return 1;
-// 	}
-// };
+import fs from "fs";
+import { User } from "../types/types";
 
-// const userExists = async (email: string) => {
-// 	return await users.find((user) => user.email === email);
-// };
+let users = require("../data/users.json") as User[];
+export const getNewId = (array: User[]) => {
+	if (array.length > 0) {
+		return array[array.length - 1].id + 1;
+	} else {
+		return 1;
+	}
+};
 
-// const findById = function (
-// 	id: number,
-// 	cb: (err: Error | null, second?: any) => void
-// ) {
-// 	process.nextTick(function () {
-// 		var idx = id - 1;
-// 		if (users[idx]) {
-// 			cb(null, users[idx]);
-// 		} else {
-// 			cb(new Error("User " + id + " does not exist"));
-// 		}
-// 	});
-// };
+export const userExists = async (email: string) => {
+	return await users.find((user) => user.email === email);
+};
 
-// const findUserByEmail = function (email: string, cb: any) {
-// 	process.nextTick(function () {
-// 		for (var i = 0, len = users.length; i < len; i++) {
-// 			var record = users[i];
-// 			if (record.email === email) {
-// 				console.log(`User with email ${record.email} found!`);
-// 				console.log(`${JSON.stringify(record)}`);
-// 				return cb(null, record);
-// 			}
-// 		}
-// 		return cb(null, null);
-// 	});
-// };
+export const findById = function (
+	id: number,
+	cb: (err: Error | null, second?: any) => void
+) {
+	process.nextTick(function () {
+		var idx = id - 1;
+		if (users[idx]) {
+			cb(null, users[idx]);
+		} else {
+			cb(new Error("User " + id + " does not exist"));
+		}
+	});
+};
 
-// function writeJSONFile(filename: string, content: User[]) {
-// 	fs.writeFileSync(filename, JSON.stringify(content), "utf8");
-// }
+export const findUserByEmail = function (email: string, cb: any) {
+	process.nextTick(function () {
+		for (var i = 0, len = users.length; i < len; i++) {
+			var record = users[i];
+			if (record.email === email) {
+				console.log(`User with email ${record.email} found!`);
+				console.log(`${JSON.stringify(record)}`);
+				return cb(null, record);
+			}
+		}
+		return cb(null, null);
+	});
+};
 
-// export default {
-// 	getNewId,
-// 	writeJSONFile,
-// 	userExists,
-// 	findUserByEmail,
-// 	findById,
-// };
+export function writeJSONFile(filename: string, content: User[]) {
+	fs.writeFileSync(filename, JSON.stringify(content), "utf8");
+}
+
+export default {
+	getNewId,
+	writeJSONFile,
+	userExists,
+	findUserByEmail,
+	findById,
+};
