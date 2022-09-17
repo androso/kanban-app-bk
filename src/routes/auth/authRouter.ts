@@ -41,9 +41,8 @@ authRouter
 					// Things inside req.session object persists between requests. Why?
 					req.session.authenticated = true;
 					req.session.userId = user.id;
-					
 					console.log(req.user);
-					res.redirect("/profile");
+					res.status(200).send("Welcome back!");
 				}
 			}
 		});
@@ -55,7 +54,7 @@ authRouter
 		res.send("register");
 	})
 	.post(async (req, res) => {
-		const { email, password } = req.body;
+		const { email, name, password } = req.body;
 		// check if we already have a user with that email
 		try {
 			const user = await userExists(email);
@@ -70,6 +69,7 @@ authRouter
 				const newUser = {
 					id: userId,
 					email,
+					name,
 					password: hashedPassword,
 				};
 				//save to db

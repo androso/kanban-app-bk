@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 app.get("/profile", (req, res) => {
 	if (req.session.authenticated) {
 		res.send(
-			`My profile! if you were redirected heFre, you are logged in! ${req.user?.email}`
+			`<h1>My profile! if you were redirected heFre, you are logged in! </h1><p> ${req.user?.name} </p><p> ${req.user?.email} </p><p> ${req.user?.id} </p>`
 		);
 	} else {
 		res.send("You are not logged in");
