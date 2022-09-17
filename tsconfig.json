@@ -26,6 +26,7 @@
 		"resolveJsonModule": true,
 		"baseUrl": "."
 	},
+	"files": ["./custom.d.ts"],
 	"include": ["./src/**/*", "./src/data/users.json"],
 	"exclude": ["node_modules", "./src/types"]
 }
