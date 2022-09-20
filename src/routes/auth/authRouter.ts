@@ -19,12 +19,6 @@ authRouter
 	.post((req, res, next) => {
 		const { email, password } = req.body;
 		console.log(email, password);
-		// check if user exists w that email
-		// if not alert
-		// if it does, check if password is correct
-		// if it doesn't, reload,
-		// if it does, set req.session.authenticated to true.
-		// add the deserializej middleware to root router, so that we get access to the user object in req.user.
 		findUserByEmail(email, async (err: Error | null, user: User | null) => {
 			if (err) {
 				console.log("there was an error");
@@ -36,13 +30,14 @@ authRouter
 				const passwordsMatch = await bcrypt.compare(password, user.password);
 				if (!passwordsMatch) {
 					console.log("Wrong password");
-					res.status(401).send("Wrong password");
+					res.status(401).json({ message: "wrong passwor" });
 				} else {
 					// Things inside req.session object persists between requests. Why?
 					req.session.authenticated = true;
 					req.session.userId = user.id;
-					console.log(req.user);
-					res.status(200).send("Welcome back!");
+					res
+						.status(200)
+						.json({ id: user.id, email: user.email, name: user.name });
 				}
 			}
 		});
@@ -60,7 +55,7 @@ authRouter
 			const user = await userExists(email);
 			if (user) {
 				console.log("user already exists!");
-				res.status(400).send("user already exists!");
+				res.status(409).send("user already exists!");
 			} else {
 				const userId = getNewId(users);
 				const salt = await bcrypt.genSalt(10);
