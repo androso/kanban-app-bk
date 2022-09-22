@@ -1,3 +1,5 @@
+import { User } from "types";
+
 declare global {
 	namespace Express {
 		interface Request {
@@ -15,6 +17,7 @@ declare module "express-session" {
 	interface SessionData {
 		authenticated?: boolean;
 		userId?: number;
+		user: User
 	}
 }
 export {};
