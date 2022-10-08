@@ -14,10 +14,10 @@ export class Board {
 
 	@Column({ type: "text" })
 	title: string;
-    
+
 	@CreateDateColumn()
 	created_at: Date;
-    
+
 	@Column({ type: "text" })
 	description: string;
 
