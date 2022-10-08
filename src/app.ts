@@ -15,18 +15,6 @@ import { AppDataSource } from "./sql-orm/data-source";
 AppDataSource.initialize()
 	.then(async () => {
 		console.log("database initialized correctly!");
-		// const myUser = new User();
-		// myUser.email = "androso@gmail.com";
-		// myUser.password = "123456";
-		// myUser.username = "androso";
-		// await AppDataSource.manager.save(myUser);
-		// console.log("user created correctly!", myUser.id);
-		// const newBoard = new Board();
-		// newBoard.user_id = 1;
-		// newBoard.title = "First board!";
-		// newBoard.description = "This is the first board!";
-		// await AppDataSource.manager.save(newBoard);
-		// console.log("board created correctly!", newBoard.id);
 	})
 	.catch((err) => {
 		console.log("database initialization failed!");
