@@ -10,6 +10,16 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 const store = new MemoryStore();
 import { AppDataSource } from "./sql-orm/data-source";
+import boardsRouter from "./routes/boards/boardsRouter";
+
+app.use(
+	cors({
+		credentials: true,
+		origin: "http://localhost:3000",
+		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	})
+);
+app.use(bodyParser.json());
 
 // initialize AppDataSource
 AppDataSource.initialize()
@@ -20,15 +30,6 @@ AppDataSource.initialize()
 		console.log("database initialization failed!");
 		console.log(err);
 	});
-
-app.use(
-	cors({
-		credentials: true,
-		origin: "http://localhost:3000",
-		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-	})
-);
-app.use(bodyParser.json());
 
 app.use(
 	session({
@@ -46,6 +47,18 @@ app.use(
 	})
 );
 
+const authMiddleware = (
+	req: express.Request,
+	res: express.Response,
+	next: express.NextFunction
+) => {
+	if (req.session.user) {
+		next();
+	} else {
+		res.status(401).json({ message: "Unauthorized", status: 401 });
+	}
+};
+
 app.get("/", (_, res) => {
 	res.send("Hello world!!");
 });
@@ -59,6 +72,8 @@ app.route("/me").get((req, res) => {
 		res.json({ messsage: "Get out!" });
 	}
 });
+
+app.use("/user/boards", authMiddleware, boardsRouter);
 
 app.listen(PORT, () => {
 	console.log("app listening on port", PORT);
