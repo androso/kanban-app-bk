@@ -1,3 +1,5 @@
+import * as dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import authRouter from "./routes/auth/authRouter";
 import session from "express-session";
@@ -10,13 +12,26 @@ const store = new MemoryStore();
 import { AppDataSource } from "./sql-orm/data-source";
 
 // initialize AppDataSource
-AppDataSource.initialize().then(async () => {
-	console.log("database initialized correctly!");
-}).catch(err => {
-	console.log("database initialization failed!");
-	console.log(err);
-});
-
+AppDataSource.initialize()
+	.then(async () => {
+		console.log("database initialized correctly!");
+		// const myUser = new User();
+		// myUser.email = "androso@gmail.com";
+		// myUser.password = "123456";
+		// myUser.username = "androso";
+		// await AppDataSource.manager.save(myUser);
+		// console.log("user created correctly!", myUser.id);
+		// const newBoard = new Board();
+		// newBoard.user_id = 1;
+		// newBoard.title = "First board!";
+		// newBoard.description = "This is the first board!";
+		// await AppDataSource.manager.save(newBoard);
+		// console.log("board created correctly!", newBoard.id);
+	})
+	.catch((err) => {
+		console.log("database initialization failed!");
+		console.log(err);
+	});
 
 app.use(
 	cors({
