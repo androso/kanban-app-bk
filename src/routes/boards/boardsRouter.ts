@@ -1,0 +1,28 @@
+import { Router } from "express";
+const boardsRouter = Router();
+import { AppDataSource } from "../../sql-orm/data-source";
+import { Board } from "../../sql-orm/entity/Board";
+const BoardRepository = AppDataSource.getRepository(Board);
+
+boardsRouter.route("/").post(async (req, res) => {
+	// For now we assume we have an authenticating middleware at app.ts that returns earlier if they're not logged in
+	const { title, description } = req.body;
+	if (req.session.user) {
+		const newBoard = new Board();
+		newBoard.description = description;
+		newBoard.title = title;
+		newBoard.user_id = req.session.user.id;
+		try {
+			await BoardRepository.save(newBoard);
+			res.status(201).json({ message: "Board created correctly", status: 201 });
+		} catch (e) {
+			if (e instanceof Error) {
+				console.error(e);
+			}
+		}
+	} else {
+		res.status(401).json({ message: "Unauthorized", status: 401 });
+	}
+});
+
+export default boardsRouter;
