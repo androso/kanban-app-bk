@@ -66,4 +66,14 @@ authRouter.route("/register").post(async (req, res) => {
 	}
 });
 
+authRouter.route("/logout").post(async (req, res) => {
+	req.session.destroy((err) => {
+		if (err) {
+			res.status(500).json({ message: "Error in the server" });
+		} else {
+			res.status(200).json({ message: "User logged out" });
+		}
+	});
+});
+
 export default authRouter;
