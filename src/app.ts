@@ -72,7 +72,7 @@ app.route("/user").get((req, res) => {
 	if (req.session.user) {
 		res.json(req.session.user);
 	} else {
-		res.status(403).json({ messsage: "Get out!" });
+		res.status(403).json({ messsage: "Get out!", status: 403 });
 	}
 });
 

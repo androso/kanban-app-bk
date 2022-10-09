@@ -61,7 +61,7 @@ authRouter.route("/register").post(async (req, res) => {
 		}
 	} catch (e) {
 		if (e instanceof Error) {
-			console.error(e);
+			res.status(500).json({ message: e.message, status: 500 });
 		}
 	}
 });
