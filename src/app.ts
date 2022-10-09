@@ -11,6 +11,9 @@ const PORT = process.env.PORT || 8080;
 const store = new MemoryStore();
 import { AppDataSource } from "./sql-orm/data-source";
 import boardsRouter from "./routes/boards/boardsRouter";
+import morgan from "morgan";
+
+app.use(morgan("tiny"));
 
 app.use(
 	cors({
@@ -65,11 +68,11 @@ app.get("/", (_, res) => {
 
 app.use("/auth", authRouter);
 
-app.route("/me").get((req, res) => {
+app.route("/user").get((req, res) => {
 	if (req.session.user) {
 		res.json(req.session.user);
 	} else {
-		res.json({ messsage: "Get out!" });
+		res.status(403).json({ messsage: "Get out!" });
 	}
 });
 
