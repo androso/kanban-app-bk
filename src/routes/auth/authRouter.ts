@@ -18,12 +18,20 @@ authRouter.route("/login").post(async (req, res) => {
 					.status(401)
 					.json({ message: "Invalid password/email", status: 401 });
 			} else {
-				req.session.user = record;
+				req.session.user = {
+					username: record.username,
+					email: record.email,
+					id: record.id,
+				};
 				req.session.save((err) => {
 					if (err) {
 						res.status(500).json({ message: "Error in the server" });
 					} else {
-						res.status(200).json(record);
+						res.status(200).json({
+							username: record.username,
+							email: record.email,
+							id: record.id,
+						});
 					}
 				});
 			}
