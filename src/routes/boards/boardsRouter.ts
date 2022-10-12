@@ -22,10 +22,8 @@ boardsRouter
 			newBoard.user_id = req.session.user.id;
 			try {
 				await BoardRepository.save(newBoard);
-				res
-					.status(201)
-					.json(newBoard);
-					// .json({ message: "Board created correctly", status: 201 });
+				res.status(201).json(newBoard);
+				// .json({ message: "Board created correctly", status: 201 });
 			} catch (e) {
 				if (e instanceof Error) {
 					console.error(e);
@@ -35,5 +33,23 @@ boardsRouter
 			res.status(401).json({ message: "Unauthorized", status: 401 });
 		}
 	});
+
+boardsRouter.route("/:boardId").delete(async (req, res) => {
+	const { boardId } = req.params;
+	const board = await BoardRepository.findOneBy({ id: Number(boardId) });
+	if (board?.user_id === req.session.userId) {
+		try {
+			await BoardRepository.delete(boardId);
+			res.sendStatus(204);
+		} catch (e) {
+			if (e instanceof Error) {
+				console.error(e);
+				res.sendStatus(500);
+			}
+		}
+	} else {
+		res.status(401);
+	}
+});
 
 export default boardsRouter;
