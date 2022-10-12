@@ -34,22 +34,45 @@ boardsRouter
 		}
 	});
 
-boardsRouter.route("/:boardId").delete(async (req, res) => {
-	const { boardId } = req.params;
-	const board = await BoardRepository.findOneBy({ id: Number(boardId) });
-	if (board?.user_id === req.session.userId) {
-		try {
-			await BoardRepository.delete(boardId);
-			res.sendStatus(204);
-		} catch (e) {
-			if (e instanceof Error) {
-				console.error(e);
-				res.sendStatus(500);
+boardsRouter
+	.route("/:boardId")
+	.delete(async (req, res) => {
+		const { boardId } = req.params;
+		const board = await BoardRepository.findOneBy({ id: Number(boardId) });
+		if (board?.user_id === req.session.userId) {
+			try {
+				await BoardRepository.delete(boardId);
+				res.sendStatus(204);
+			} catch (e) {
+				if (e instanceof Error) {
+					console.error(e);
+					res.sendStatus(500);
+				}
 			}
+		} else {
+			res.status(401);
 		}
-	} else {
-		res.status(401);
-	}
-});
+	})
+	.put(async (req, res) => {
+		const { boardId } = req.params;
+		const { title, description } = req.body;
+		const board = await BoardRepository.findOneBy({ id: Number(boardId) });
+		if (board?.user_id === req.session.userId) {
+			try {
+				await BoardRepository.update(boardId, {
+					title,
+					description,
+				});
+				res.sendStatus(204);
+			} catch (e) {
+				if (e instanceof Error) {
+					console.error(e);
+					res.sendStatus(500);
+				}
+			}
+		} else {
+			res.status(401);
+		}
+	});
 
 export default boardsRouter;
