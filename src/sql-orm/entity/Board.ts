@@ -21,6 +21,6 @@ export class Board {
 	@Column({ type: "text" })
 	description: string;
 
-	@ManyToOne(() => User, (user) => user.id)
-	user_id: number;
+	@ManyToOne(() => User, (user) => user)
+	user: number;
 }

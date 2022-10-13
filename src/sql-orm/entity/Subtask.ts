@@ -7,7 +7,7 @@ export class Subtask {
 	id: number;
 
 	@ManyToOne(() => Task, (task) => task.id)
-	task_id: number;
+	task: number;
 
 	@Column({ type: "text" })
 	title: string;

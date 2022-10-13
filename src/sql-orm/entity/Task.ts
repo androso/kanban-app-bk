@@ -14,8 +14,8 @@ export class Task {
 	description: string;
 
 	@ManyToOne(() => Board, (board) => board.id)
-	board_id: number;
+	board: number;
 
 	@ManyToOne(() => Status, (status) => status.id)
-	status_id: string;
+	status: string;
 }
