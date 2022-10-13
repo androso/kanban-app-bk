@@ -1,13 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Generated, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Status {
-	@PrimaryGeneratedColumn({ type: "int" })
-	id: number;
-
-	@Column({ type: "text" })
+	@Column({ unique: true })
+	@Generated("uuid")
+	id: string;
+	
+	@PrimaryColumn({ type: "text" })
 	title: string;
 
-	@Column({ type: "text" })
+	@PrimaryColumn({ type: "text" })
 	color: string;
 }
