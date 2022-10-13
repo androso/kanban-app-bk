@@ -12,6 +12,8 @@ const store = new MemoryStore();
 import { AppDataSource } from "./sql-orm/data-source";
 import boardsRouter from "./routes/boards/boardsRouter";
 import morgan from "morgan";
+import { Status } from "./sql-orm/entity/Status";
+import { initializeStatuses } from "./helpers/helpers";
 
 app.use(morgan("tiny"));
 
@@ -26,7 +28,9 @@ app.use(bodyParser.json());
 
 // initialize AppDataSource
 AppDataSource.initialize()
-	.then(async () => {
+	.then(async (dataSource) => {
+		// create a new status
+		initializeStatuses();
 		console.log("database initialized correctly!");
 	})
 	.catch((err) => {
