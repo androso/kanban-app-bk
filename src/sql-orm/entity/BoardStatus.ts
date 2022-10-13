@@ -8,5 +8,5 @@ export class BoardStatus {
 	board_id: number;
 
 	@ManyToOne(() => Status, (status) => status.id)
-	status_id: number;
+	status_id: string;
 }
