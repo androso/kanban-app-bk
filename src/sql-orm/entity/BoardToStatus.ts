@@ -1,4 +1,5 @@
 import {
+	Column,
 	Entity,
 	JoinColumn,
 	ManyToOne,
@@ -8,21 +9,22 @@ import {
 import { Board } from "./Board";
 import { Status } from "./Status";
 
-// ! the problem is here
 @Entity()
 export class BoardToStatus {
 	@PrimaryGeneratedColumn()
 	id: number;
 
+	@Column({ type: "int" })
+	boardId: number;
+
 	@ManyToOne(() => Board, (board) => board)
+	@JoinColumn({ name: "boardId" })
 	board: Board;
 
+	@Column({ type: "int" })
+	statusId: number;
+
 	@ManyToOne(() => Status, (status) => status)
+	@JoinColumn({ name: "statusId" })
 	status: Status;
-
-	// @ManyToOne(() => Board, (board) => board.id)
-	// board: number;
-
-	// @ManyToOne(() => Status, (status) => status.id)
-	// status: number;
 }

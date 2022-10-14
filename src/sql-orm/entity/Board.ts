@@ -2,6 +2,7 @@ import {
 	Column,
 	CreateDateColumn,
 	Entity,
+	JoinColumn,
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
@@ -21,6 +22,10 @@ export class Board {
 	@Column({ type: "text" })
 	description: string;
 
+	@Column({ type: "int" })
+	userId: number;
+
 	@ManyToOne(() => User, (user) => user)
+	@JoinColumn({ name: "userId" })
 	user: User;
 }

@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+	Column,
+	Entity,
+	JoinColumn,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+} from "typeorm";
 import { Board } from "./Board";
 import { Status } from "./Status";
 
@@ -13,9 +19,17 @@ export class Task {
 	@Column({ type: "text" })
 	description: string;
 
-	@ManyToOne(() => Board, (board) => board.id)
-	board: number;
+	@Column({ type: "int" })
+	boardId: number;
 
-	@ManyToOne(() => Status, (status) => status.id)
-	status: string;
+	@ManyToOne(() => Board, (board) => board)
+	@JoinColumn({ name: "boardId" })
+	board: Board;
+
+	@Column({ type: "int" })
+	statusId: number;
+
+	@ManyToOne(() => Status, (status) => status)
+	@JoinColumn({ name: "statusId" })
+	status: Status;
 }
