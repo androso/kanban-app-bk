@@ -22,5 +22,5 @@ export class Board {
 	description: string;
 
 	@ManyToOne(() => User, (user) => user)
-	user: number;
+	user: User;
 }

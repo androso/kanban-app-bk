@@ -13,17 +13,16 @@ import { Status } from "./Status";
 export class BoardToStatus {
 	@PrimaryGeneratedColumn()
 	id: number;
-	// @PrimaryColumn({ type: "int" })
-	@ManyToOne(() => Board, (board) => board.id)
-	board: number;
 
-	@ManyToOne(() => Status, (status) => status.id)
-	status: number;
-	// @PrimaryColumn({ type: "text" })
+	@ManyToOne(() => Board, (board) => board)
+	board: Board;
+
+	@ManyToOne(() => Status, (status) => status)
+	status: Status;
+
+	// @ManyToOne(() => Board, (board) => board.id)
+	// board: number;
+
 	// @ManyToOne(() => Status, (status) => status.id)
-	// statusTitle: string;
-
-	// @PrimaryColumn({ type: "text" })
-	// @ManyToOne(() => Status, (status) => status.color)
-	// statusColor: string;
+	// status: number;
 }
