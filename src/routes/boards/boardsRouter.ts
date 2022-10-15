@@ -6,16 +6,16 @@ import { Status } from "../../sql-orm/entity/Status";
 import { initialStatuses } from "../../helpers/helpers";
 import { Task } from "../../sql-orm/entity/Task";
 import { User } from "../../sql-orm/entity/User";
-const BoardRepository = AppDataSource.getRepository(Board);
+export const BoardRepository = AppDataSource.getRepository(Board);
 const StatusRepository = AppDataSource.getRepository(Status);
-const TaskRepository = AppDataSource.getRepository(Task);
+export const TaskRepository = AppDataSource.getRepository(Task);
 const UserRepository = AppDataSource.getRepository(User);
 
 boardsRouter
 	.route("/")
 	.get(async (req, res) => {
 		const boards = await BoardRepository.findBy({
-			user: req.session.user,
+			userId: req.session.userId,
 		});
 		res.json(boards);
 	})
