@@ -3,7 +3,9 @@ import {
 	PrimaryGeneratedColumn,
 	Column,
 	CreateDateColumn,
+	OneToMany,
 } from "typeorm";
+import { Board } from "./Board";
 
 @Entity()
 export class User {
@@ -21,4 +23,7 @@ export class User {
 
 	@CreateDateColumn()
 	created_at: Date;
+
+	@OneToMany(() => Board, (board) => board.user, { cascade: true })
+	boards: Board[];
 }

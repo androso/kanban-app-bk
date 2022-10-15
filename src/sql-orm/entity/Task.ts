@@ -24,17 +24,17 @@ export class Task {
 	@Column({ type: "int" })
 	boardId: number;
 
-	@ManyToOne(() => Board, (board) => board)
+	@ManyToOne(() => Board, (board) => board.tasks, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "boardId" })
 	board: Board;
 
 	@Column({ type: "int" })
 	statusId: number;
 
-	@ManyToOne(() => Status, (status) => status)
+	@ManyToOne(() => Status, (status) => status, { onDelete: "CASCADE"})
 	@JoinColumn({ name: "statusId" })
 	status: Status;
 
-	@OneToMany(() => Subtask, (subtask) => subtask.task)
+	@OneToMany(() => Subtask, (subtask) => subtask.task, { cascade: true })
 	subtasks: Subtask[];
 }

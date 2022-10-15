@@ -6,10 +6,12 @@ import {
 	JoinTable,
 	ManyToMany,
 	ManyToOne,
+	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { Status } from "./Status";
+import { Task } from "./Task";
 import { User } from "./User";
 
 @Entity()
@@ -29,11 +31,14 @@ export class Board {
 	@Column({ type: "int" })
 	userId: number;
 
-	@ManyToOne(() => User, (user) => user)
+	@ManyToOne(() => User, (user) => user.boards, { onDelete: "CASCADE" })
 	@JoinColumn({ name: "userId" })
 	user: User;
 
-	@ManyToMany(() => Status, (status) => status)
-	@JoinTable({name: "board_to_status"})
+	@ManyToMany(() => Status, (status) => status.boards)
+	@JoinTable({ name: "board_to_status" })
 	statuses: Status[];
+
+	@OneToMany(() => Task, (task) => task.board, { cascade: true })
+	tasks: Task[];
 }

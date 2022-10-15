@@ -12,6 +12,6 @@ export class Status {
 	@Column()
 	color: string;
 
-	@ManyToMany(() => Board, (board) => board)
+	@ManyToMany(() => Board, (board) => board.statuses)
 	boards: Board[];
 }
