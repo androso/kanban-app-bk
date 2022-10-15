@@ -6,10 +6,11 @@ import { Status } from "../../sql-orm/entity/Status";
 import { initialStatuses } from "../../helpers/helpers";
 import { Task } from "../../sql-orm/entity/Task";
 import { User } from "../../sql-orm/entity/User";
+import boardTasksRouter from "./tasks/boardTasksRouter";
 export const BoardRepository = AppDataSource.getRepository(Board);
-const StatusRepository = AppDataSource.getRepository(Status);
+export const StatusRepository = AppDataSource.getRepository(Status);
 export const TaskRepository = AppDataSource.getRepository(Task);
-const UserRepository = AppDataSource.getRepository(User);
+export const UserRepository = AppDataSource.getRepository(User);
 
 boardsRouter
 	.route("/")
@@ -129,4 +130,6 @@ boardsRouter
 			}
 		}
 	});
+
+boardsRouter.use("/:boardId/tasks", boardTasksRouter);
 export default boardsRouter;
