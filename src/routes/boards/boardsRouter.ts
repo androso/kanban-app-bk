@@ -112,8 +112,9 @@ boardsRouter
 		if (board && req.session.user) {
 			if (board.userId === req.session.user.id) {
 				try {
-					const boardTasks = await TaskRepository.findBy({
-						boardId: board.id,
+					const boardTasks = await TaskRepository.find({
+						where: { boardId: Number(boardId) },
+						relations: ["subtasks"],
 					});
 					res.json({
 						...board,

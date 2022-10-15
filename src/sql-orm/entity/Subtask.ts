@@ -15,7 +15,7 @@ export class Subtask {
 	@Column({ type: "int" })
 	taskId: number;
 
-	@ManyToOne(() => Task, (task) => task)
+	@ManyToOne(() => Task, (task) => task.subtasks)
 	@JoinColumn({ name: "taskId" })
 	task: Task;
 

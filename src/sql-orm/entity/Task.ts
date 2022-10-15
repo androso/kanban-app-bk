@@ -3,10 +3,12 @@ import {
 	Entity,
 	JoinColumn,
 	ManyToOne,
+	OneToMany,
 	PrimaryGeneratedColumn,
 } from "typeorm";
 import { Board } from "./Board";
 import { Status } from "./Status";
+import { Subtask } from "./Subtask";
 
 @Entity()
 export class Task {
@@ -32,4 +34,7 @@ export class Task {
 	@ManyToOne(() => Status, (status) => status)
 	@JoinColumn({ name: "statusId" })
 	status: Status;
+
+	@OneToMany(() => Subtask, (subtask) => subtask.task)
+	subtasks: Subtask[];
 }
