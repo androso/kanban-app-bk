@@ -1,10 +1,5 @@
-import {
-	Column,
-	Entity,
-	Generated,
-	PrimaryColumn,
-	PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Board } from "./Board";
 
 @Entity()
 export class Status {
@@ -16,4 +11,7 @@ export class Status {
 
 	@Column()
 	color: string;
+
+	@ManyToMany(() => Board, (board) => board)
+	boards: Board[];
 }

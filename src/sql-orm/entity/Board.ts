@@ -3,9 +3,13 @@ import {
 	CreateDateColumn,
 	Entity,
 	JoinColumn,
+	JoinTable,
+	ManyToMany,
 	ManyToOne,
 	PrimaryGeneratedColumn,
 } from "typeorm";
+
+import { Status } from "./Status";
 import { User } from "./User";
 
 @Entity()
@@ -28,4 +32,8 @@ export class Board {
 	@ManyToOne(() => User, (user) => user)
 	@JoinColumn({ name: "userId" })
 	user: User;
+
+	@ManyToMany(() => Status, (status) => status)
+	@JoinTable({name: "board_to_status"})
+	statuses: Status[];
 }
