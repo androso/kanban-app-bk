@@ -10,6 +10,7 @@ const BoardRepository = AppDataSource.getRepository(Board);
 const StatusRepository = AppDataSource.getRepository(Status);
 const TaskRepository = AppDataSource.getRepository(Task);
 const UserRepository = AppDataSource.getRepository(User);
+
 boardsRouter
 	.route("/")
 	.get(async (req, res) => {
@@ -42,8 +43,8 @@ boardsRouter
 					statuses: initialStatusesFromDB,
 				});
 
-				await BoardRepository.save(newBoard);
-				res.sendStatus(201);
+				const { user, ...boardSaved } = await BoardRepository.save(newBoard);
+				res.status(201).json(boardSaved);
 			} catch (e) {
 				if (e instanceof Error) {
 					console.error(e);
