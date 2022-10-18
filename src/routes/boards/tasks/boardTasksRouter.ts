@@ -116,4 +116,39 @@ boardTasksRouter.route("/:taskId/subtasks").post(async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+boardTasksRouter
+	.route("/:taskId/subtasks/:subtaskId")
+	.patch(async (req, res) => {
+		const { taskId, subtaskId } = req.params as {
+			taskId: string;
+			subtaskId: string;
+		};
+		const { title, completed } = req.body as {
+			title: string;
+			completed: boolean;
+		};
+		const taskIdNumber = Number(taskId);
+		const subtaskIdNumber = Number(subtaskId);
+		if (!isNaN(taskIdNumber) && !isNaN(subtaskIdNumber)) {
+			if (title) {
+				console.log("updating a title", { subtaskIdNumber, completed });
+				const updatedSubtask = await SubtaskRepository.update(subtaskIdNumber, {
+					title,
+				});
+				if (updatedSubtask.affected) {
+					res.sendStatus(204);
+				}
+			} else if (completed != null) {
+				console.log("updating a completed", { subtaskIdNumber, completed });
+				const updatedSubtask = await SubtaskRepository.update(subtaskIdNumber, {
+					completed: completed,
+				});
+				if (updatedSubtask.affected) {
+					res.sendStatus(204);
+				}
+			}
+		}
+	});
+
 export default boardTasksRouter;
