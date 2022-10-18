@@ -96,4 +96,24 @@ boardTasksRouter.route("/:taskId").patch(async (req, res) => {
 		}
 	}
 });
+boardTasksRouter.route("/:taskId/subtasks").post(async (req, res) => {
+	const { taskId } = req.params as { taskId: string };
+	const taskIdNumber = Number(taskId);
+	const { title } = req.body as { title: string };
+	if (!isNaN(taskIdNumber)) {
+		const taskFromDB = await TaskRepository.findOneOrFail({
+			where: { id: taskIdNumber },
+			relations: ["subtasks"],
+		});
+		const newSubtask = SubtaskRepository.create({
+			completed: false,
+			title,
+		});
+		taskFromDB.subtasks.push(newSubtask);
+		await TaskRepository.save(taskFromDB);
+		res.status(201).json(newSubtask);
+	} else {
+		res.sendStatus(500);
+	}
+});
 export default boardTasksRouter;
