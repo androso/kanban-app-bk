@@ -64,7 +64,7 @@ boardTasksRouter.route("/").post(async (req, res) => {
 });
 boardTasksRouter.route("/:taskId").patch(async (req, res) => {
 	const { taskId } = req.params as { taskId: string };
-	const { title, description } = req.body;
+	const { title, description, statusId } = req.body;
 	if (taskId) {
 		if (title) {
 			const updated = await TaskRepository.update(taskId, { title });
@@ -76,6 +76,15 @@ boardTasksRouter.route("/:taskId").patch(async (req, res) => {
 		} else if (description) {
 			const updated = await TaskRepository.update(taskId, {
 				description,
+			});
+			if (updated.affected) {
+				res.sendStatus(204);
+			} else {
+				res.sendStatus(500);
+			}
+		} else if (statusId) {
+			const updated = await TaskRepository.update(taskId, {
+				statusId,
 			});
 			if (updated.affected) {
 				res.sendStatus(204);
