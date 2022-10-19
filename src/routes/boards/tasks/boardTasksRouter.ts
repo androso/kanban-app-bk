@@ -132,7 +132,6 @@ boardTasksRouter
 		const subtaskIdNumber = Number(subtaskId);
 		if (!isNaN(taskIdNumber) && !isNaN(subtaskIdNumber)) {
 			if (title) {
-				console.log("updating a title", { subtaskIdNumber, completed });
 				const updatedSubtask = await SubtaskRepository.update(subtaskIdNumber, {
 					title,
 				});
@@ -140,7 +139,6 @@ boardTasksRouter
 					res.sendStatus(204);
 				}
 			} else if (completed != null) {
-				console.log("updating a completed", { subtaskIdNumber, completed });
 				const updatedSubtask = await SubtaskRepository.update(subtaskIdNumber, {
 					completed: completed,
 				});
@@ -149,6 +147,16 @@ boardTasksRouter
 				}
 			}
 		}
+	})
+	.delete(async (req, res) => {
+		const subtaskIdNumber = Number(req.params.subtaskId);
+		if (!isNaN(subtaskIdNumber)) {
+			const result = await SubtaskRepository.delete(subtaskIdNumber);
+			if (result.affected) {
+				res.sendStatus(204);
+			} else {
+				res.sendStatus(500);
+			}
+		}
 	});
-
 export default boardTasksRouter;
