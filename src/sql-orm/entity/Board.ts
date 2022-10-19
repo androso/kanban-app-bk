@@ -35,7 +35,7 @@ export class Board {
 	@JoinColumn({ name: "userId" })
 	user: User;
 
-	@ManyToMany(() => Status, (status) => status.boards)
+	@ManyToMany(() => Status, (status) => status.boards, { cascade: true })
 	@JoinTable({ name: "board_to_status" })
 	statuses: Status[];
 

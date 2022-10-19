@@ -7,6 +7,7 @@ import { initialStatuses } from "../../helpers/helpers";
 import { Task } from "../../sql-orm/entity/Task";
 import { User } from "../../sql-orm/entity/User";
 import boardTasksRouter from "./tasks/boardTasksRouter";
+import boardStatusesRouter from "./statuses/boardStatusesRouter";
 export const BoardRepository = AppDataSource.getRepository(Board);
 export const StatusRepository = AppDataSource.getRepository(Status);
 export const TaskRepository = AppDataSource.getRepository(Task);
@@ -132,4 +133,5 @@ boardsRouter
 	});
 
 boardsRouter.use("/:boardId/tasks", boardTasksRouter);
+boardsRouter.use("/:boardId/statuses", boardStatusesRouter);
 export default boardsRouter;
