@@ -62,40 +62,56 @@ boardTasksRouter.route("/").post(async (req, res) => {
 		res.sendStatus(500);
 	}
 });
-boardTasksRouter.route("/:taskId").patch(async (req, res) => {
-	const { taskId } = req.params as { taskId: string };
-	const { title, description, statusId } = req.body;
-	if (taskId) {
-		if (title) {
-			const updated = await TaskRepository.update(taskId, { title });
-			if (updated.affected) {
-				res.sendStatus(204);
+boardTasksRouter
+	.route("/:taskId")
+	.patch(async (req, res) => {
+		const { taskId } = req.params as { taskId: string };
+		const { title, description, statusId } = req.body;
+		if (taskId) {
+			if (title) {
+				const updated = await TaskRepository.update(taskId, { title });
+				if (updated.affected) {
+					res.sendStatus(204);
+				} else {
+					res.sendStatus(500);
+				}
+			} else if (description) {
+				const updated = await TaskRepository.update(taskId, {
+					description,
+				});
+				if (updated.affected) {
+					res.sendStatus(204);
+				} else {
+					res.sendStatus(500);
+				}
+			} else if (statusId) {
+				const updated = await TaskRepository.update(taskId, {
+					statusId,
+				});
+				if (updated.affected) {
+					res.sendStatus(204);
+				} else {
+					res.sendStatus(500);
+				}
 			} else {
-				res.sendStatus(500);
+				res.sendStatus(400);
 			}
-		} else if (description) {
-			const updated = await TaskRepository.update(taskId, {
-				description,
-			});
-			if (updated.affected) {
-				res.sendStatus(204);
-			} else {
-				res.sendStatus(500);
-			}
-		} else if (statusId) {
-			const updated = await TaskRepository.update(taskId, {
-				statusId,
-			});
-			if (updated.affected) {
-				res.sendStatus(204);
-			} else {
-				res.sendStatus(500);
-			}
-		} else {
-			res.sendStatus(400);
 		}
-	}
-});
+	})
+	.delete(async (req, res) => {
+		const taskIdNumber = Number(req.params.taskId);
+		if (!isNaN(taskIdNumber)) {
+			try {
+				const task = await TaskRepository.findOneOrFail({
+					where: { id: taskIdNumber },
+				});
+				await TaskRepository.remove(task);
+				res.sendStatus(204);
+			} catch (e) {
+				res.sendStatus(500);
+			}
+		}
+	});
 boardTasksRouter.route("/:taskId/subtasks").post(async (req, res) => {
 	const { taskId } = req.params as { taskId: string };
 	const taskIdNumber = Number(taskId);
