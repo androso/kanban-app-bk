@@ -10,13 +10,12 @@ authRouter.route("/login").post(async (req, res) => {
 	try {
 		const record = await UserRepository.findOneBy({ email });
 		if (!record) {
-			res.status(404).json({ message: "User not found", status: 404 });
+			res.sendStatus(404);
 		} else {
 			const passwordsMatch = await bcrypt.compare(password, record.password);
 			if (!passwordsMatch) {
 				res
-					.status(401)
-					.json({ message: "Invalid password/email", status: 401 });
+					.sendStatus(401);
 			} else {
 				req.session.user = {
 					username: record.username,
@@ -25,8 +24,9 @@ authRouter.route("/login").post(async (req, res) => {
 				};
 				req.session.save((err) => {
 					if (err) {
-						res.status(500).json({ message: "Error in the server" });
+						res.sendStatus(500);
 					} else {
+						console.log("User saved", req.session.user)
 						res.status(200).json({
 							username: record.username,
 							email: record.email,
@@ -37,16 +37,18 @@ authRouter.route("/login").post(async (req, res) => {
 			}
 		}
 	} catch (e) {
-		res.status(500).json({ message: e.message, status: 500 });
+		res.sendStatus(500)
 	}
 });
 
 authRouter.route("/register").post(async (req, res) => {
-	const { email, username, password } = req.body;
+	const { email, username, password } = 
+req.body;
 	try {
 		const userExists = await UserRepository.findOneBy({ email });
 		if (userExists) {
-			res.status(409).json({ message: "User already exists", status: 409 });
+			res.statusMessage = "User already exists";
+			res.status(409).end();
 		} else {
 			const newUser = new User();
 			const salt = await bcrypt.genSalt(10);
@@ -57,11 +59,12 @@ authRouter.route("/register").post(async (req, res) => {
 			// save to db
 			await AppDataSource.manager.save(newUser);
 			// await UserRepository.save(newUser);
-			res.status(201).json({ message: "User created correctly", status: 201 });
+			res.sendStatus(201)
 		}
 	} catch (e) {
 		if (e instanceof Error) {
-			res.status(500).json({ message: e.message, status: 500 });
+			res.statusMessage = "Internal Error";
+			res.status(500).end();
 		}
 	}
 });
@@ -69,9 +72,11 @@ authRouter.route("/register").post(async (req, res) => {
 authRouter.route("/logout").post(async (req, res) => {
 	req.session.destroy((err) => {
 		if (err) {
-			res.status(500).json({ message: "Error in the server" });
+			res.statusMessage = "Internal Error";
+			
+			res.status(500).end();
 		} else {
-			res.status(200).json({ message: "User logged out" });
+			res.sendStatus(200);
 		}
 	});
 });

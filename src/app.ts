@@ -12,7 +12,6 @@ const store = new MemoryStore();
 import { AppDataSource } from "./sql-orm/data-source";
 import boardsRouter from "./routes/boards/boardsRouter";
 import morgan from "morgan";
-import { Status } from "./sql-orm/entity/Status";
 import { initializeStatuses } from "./helpers/helpers";
 
 app.use(morgan("tiny"));
@@ -20,15 +19,17 @@ app.use(morgan("tiny"));
 app.use(
 	cors({
 		credentials: true,
-		origin: "http://localhost:3000",
-		methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+		origin: true
 	})
 );
+
+app.set('trust proxy', 1) // trust first proxy
+
 app.use(bodyParser.json());
 
 // initialize AppDataSource
 AppDataSource.initialize()
-	.then(async (dataSource) => {
+	.then(async () => {
 		// create a new status
 		initializeStatuses();
 		console.log("database initialized correctly!");
@@ -45,10 +46,10 @@ app.use(
 		resave: false,
 		saveUninitialized: false,
 		cookie: {
-			httpOnly: true,
+			// httpOnly: true,
 			maxAge: 1000 * 60 * 60 * 24,
-			sameSite: "lax",
-			secure: false,
+			sameSite: "none",
+			secure: true
 		},
 		store: store,
 	})
@@ -59,6 +60,7 @@ const authMiddleware = (
 	res: express.Response,
 	next: express.NextFunction
 ) => {
+	console.log(req.protocol);
 	if (req.session.user) {
 		next();
 	} else {

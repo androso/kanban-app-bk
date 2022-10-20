@@ -1,5 +1,7 @@
 { pkgs }: {
     deps = [
+        pkgs.psmisc
+        pkgs.lsof
         pkgs.flyctl
         pkgs.nixos-rebuild
         pkgs.nano

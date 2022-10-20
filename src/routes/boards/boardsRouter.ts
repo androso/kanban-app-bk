@@ -16,10 +16,15 @@ export const UserRepository = AppDataSource.getRepository(User);
 boardsRouter
 	.route("/")
 	.get(async (req, res) => {
-		const boards = await BoardRepository.findBy({
-			userId: req.session.userId,
-		});
-		res.json(boards);
+		if (req.session.user) {
+			const boards = await BoardRepository.findBy({
+				userId: req.session.user.id,
+			});
+			res.json(boards);
+		} else {
+			// send status for unathenticated
+			res.sendStatus(401);
+		}
 	})
 	.post(async (req, res) => {
 		const { title, description } = req.body;

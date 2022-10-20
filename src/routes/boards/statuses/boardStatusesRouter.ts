@@ -4,7 +4,6 @@ import { AppDataSource } from "../../../sql-orm/data-source";
 import {
 	BoardRepository,
 	StatusRepository,
-	TaskRepository,
 } from "../boardsRouter";
 const boardStatusesRouter = Router({ mergeParams: true });
 

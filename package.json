@@ -18,6 +18,7 @@
 		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "node ./dist/app.js",
 		"typeorm": "typeorm-ts-node-commonjs",
+		"build": "tsc",
 		"dev": "concurrently \"tsc -w\" \"nodemon dist/app.js\""
 	},
 	"keywords": [],

@@ -1,4 +1,4 @@
-run = "yarn dev"
+run = "yarn build && yarn start"
 [languages.typescript]
 pattern = "**/{*.ts,*.js,*.tsx,*.jsx}"
 syntax = "typescript"
