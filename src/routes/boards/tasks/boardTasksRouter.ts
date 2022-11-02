@@ -67,8 +67,15 @@ boardTasksRouter
 	.patch(async (req, res) => {
 		const { taskId } = req.params as { taskId: string };
 		const { title, description, statusId } = req.body;
-		if (taskId) {
-			if (title) {
+
+		const task = await TaskRepository.findOneBy({ id: Number(taskId) });
+		if (!task) {
+			res.sendStatus(404);
+		} else {
+			const board = await BoardRepository.findOneBy({ id: Number(task.boardId) });
+			if (board?.userId !== (req.user as { id: number }).id) {
+				res.sendStatus(403);
+			} else if (title) {
 				const updated = await TaskRepository.update(taskId, { title });
 				if (updated.affected) {
 					res.sendStatus(204);
@@ -97,6 +104,7 @@ boardTasksRouter
 				res.sendStatus(400);
 			}
 		}
+
 	})
 	.delete(async (req, res) => {
 		const taskIdNumber = Number(req.params.taskId);
