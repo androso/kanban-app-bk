@@ -14,8 +14,7 @@ authRouter.route("/login").post(async (req, res) => {
 		} else {
 			const passwordsMatch = await bcrypt.compare(password, record.password);
 			if (!passwordsMatch) {
-				res
-					.sendStatus(401);
+				res.sendStatus(401);
 			} else {
 				req.session.user = {
 					username: record.username,
@@ -26,7 +25,7 @@ authRouter.route("/login").post(async (req, res) => {
 					if (err) {
 						res.sendStatus(500);
 					} else {
-						console.log("User saved", req.session.user)
+						console.log("User saved", req.session.user);
 						res.status(200).json({
 							username: record.username,
 							email: record.email,
@@ -37,14 +36,18 @@ authRouter.route("/login").post(async (req, res) => {
 			}
 		}
 	} catch (e) {
-		res.sendStatus(500)
+		res.sendStatus(500);
 	}
 });
 
 authRouter.route("/register").post(async (req, res) => {
-	const { email, username, password } = 
-req.body;
+	const { email, username, password } = req.body;
 	try {
+		if (!email || !username || !password) {
+			res.sendStatus(400);
+			return;
+		}
+
 		const userExists = await UserRepository.findOneBy({ email });
 		if (userExists) {
 			res.statusMessage = "User already exists";
@@ -59,7 +62,7 @@ req.body;
 			// save to db
 			await AppDataSource.manager.save(newUser);
 			// await UserRepository.save(newUser);
-			res.sendStatus(201)
+			res.sendStatus(201);
 		}
 	} catch (e) {
 		if (e instanceof Error) {
@@ -73,7 +76,7 @@ authRouter.route("/logout").post(async (req, res) => {
 	req.session.destroy((err) => {
 		if (err) {
 			res.statusMessage = "Internal Error";
-			
+
 			res.status(500).end();
 		} else {
 			res.sendStatus(200);

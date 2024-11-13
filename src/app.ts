@@ -19,11 +19,11 @@ app.use(morgan("tiny"));
 app.use(
 	cors({
 		credentials: true,
-		origin: true
+		origin: true,
 	})
 );
 
-app.set('trust proxy', 1) // trust first proxy
+app.set("trust proxy", 1); // trust first proxy
 
 app.use(bodyParser.json());
 
@@ -48,8 +48,8 @@ app.use(
 		cookie: {
 			// httpOnly: true,
 			maxAge: 1000 * 60 * 60 * 24,
-			sameSite: "none",
-			secure: true
+			secure: process.env.NODE_ENV === "production", // Only require HTTPS in production
+			sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
 		},
 		store: store,
 	})
