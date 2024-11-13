@@ -5,6 +5,52 @@ import { AppDataSource } from "../../sql-orm/data-source";
 const authRouter = express.Router();
 const UserRepository = AppDataSource.getRepository(User);
 
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Authenticate user and create session
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: mypassword123
+ *     responses:
+ *       200:
+ *         description: Successfully authenticated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 email:
+ *                   type: string
+ *                 id:
+ *                   type: number
+ *       401:
+ *         description: Invalid credentials
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
 authRouter.route("/login").post(async (req, res) => {
 	const { email, password } = req.body;
 	try {
@@ -40,6 +86,45 @@ authRouter.route("/login").post(async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register new user account
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - username
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: user@example.com
+ *               username:
+ *                 type: string
+ *                 example: johndoe
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 example: mypassword123
+ *     responses:
+ *       201:
+ *         description: User successfully registered
+ *       400:
+ *         description: Missing required fields
+ *       409:
+ *         description: User already exists with this email
+ *       500:
+ *         description: Server error
+ */
 authRouter.route("/register").post(async (req, res) => {
 	const { email, username, password } = req.body;
 	try {
@@ -72,6 +157,21 @@ authRouter.route("/register").post(async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: End user session and logout
+ *     tags:
+ *       - Authentication
+ *     security:
+ *       - cookieAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully logged out
+ *       500:
+ *         description: Server error destroying session
+ */
 authRouter.route("/logout").post(async (req, res) => {
 	req.session.destroy((err) => {
 		if (err) {

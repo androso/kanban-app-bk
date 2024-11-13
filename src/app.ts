@@ -1,6 +1,8 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import express from "express";
+import swaggerJsDoc, { Options } from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 import authRouter from "./routes/auth/authRouter";
 import session from "express-session";
 import cors from "cors";
@@ -26,6 +28,28 @@ app.use(
 app.set("trust proxy", 1); // trust first proxy
 
 app.use(bodyParser.json());
+
+const swaggerOptions: Options = {
+	definition: {
+		openapi: "3.0.0",
+		info: {
+			title: "Express API Documentation",
+			version: "1.0.0",
+			description: "API documentation for our Express application",
+		},
+		servers: [
+			{
+				url: "http://localhost:8080",
+				description: "Development server",
+			},
+		],
+	},
+	apis: ["./src/routes/**/*.ts"],
+};
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 // initialize AppDataSource
 AppDataSource.initialize()
