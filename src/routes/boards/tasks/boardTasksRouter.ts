@@ -9,6 +9,83 @@ import {
 const boardTasksRouter = Router({ mergeParams: true });
 const SubtaskRepository = AppDataSource.manager.getRepository(Subtask);
 
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Subtask:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         title:
+ *           type: string
+ *         completed:
+ *           type: boolean
+ *     Task:
+ *       type: object
+ *       properties:
+ *         id:
+ *           type: integer
+ *         title:
+ *           type: string
+ *         description:
+ *           type: string
+ *         statusId:
+ *           type: integer
+ *         subtasks:
+ *           type: array
+ *           items:
+ *             $ref: '#/components/schemas/Subtask'
+ */
+
+/**
+ * @swagger
+ * /user/boards/{boardId}/tasks:
+ *   post:
+ *     summary: Create a new task in a board
+ *     tags:
+ *       - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: boardId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - statusId
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "New Task"
+ *               description:
+ *                 type: string
+ *                 example: "Task description"
+ *               statusId:
+ *                 type: integer
+ *               subtasks:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     title:
+ *                       type: string
+ *     responses:
+ *       201:
+ *         description: Task created successfully
+ *       500:
+ *         description: Server error
+ *     security:
+ *       - cookieAuth: []
+ */
 boardTasksRouter.route("/").post(async (req, res) => {
 	const { description, statusId, title, subtasks } = req.body as {
 		description: string;
@@ -62,6 +139,80 @@ boardTasksRouter.route("/").post(async (req, res) => {
 		res.sendStatus(500);
 	}
 });
+
+/**
+ * @swagger
+ * /user/boards/{boardId}/tasks/{taskId}:
+ *   patch:
+ *     summary: Update a task's title, description or status
+ *     tags:
+ *       - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: boardId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the board
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the task to update
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "Updated task title"
+ *               description:
+ *                 type: string
+ *                 example: "Updated task description"
+ *               statusId:
+ *                 type: integer
+ *                 example: 1
+ *     responses:
+ *       204:
+ *         description: Task updated successfully
+ *       400:
+ *         description: No valid fields provided for update
+ *       403:
+ *         description: User does not own this board
+ *       404:
+ *         description: Task not found
+ *       500:
+ *         description: Server error
+ *     security:
+ *       - cookieAuth: []
+ *   delete:
+ *     summary: Delete a task
+ *     tags:
+ *       - Tasks
+ *     parameters:
+ *       - in: path
+ *         name: boardId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the board
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the task to delete
+ *     responses:
+ *       204:
+ *         description: Task deleted successfully
+ *       500:
+ *         description: Server error
+ *     security:
+ *       - cookieAuth: []
+ */
 boardTasksRouter
 	.route("/:taskId")
 	.patch(async (req, res) => {
@@ -120,6 +271,49 @@ boardTasksRouter
 			}
 		}
 	});
+
+/**
+ * @swagger
+ * /api/tasks/{taskId}/subtasks:
+ *   post:
+ *     summary: Create a new subtask for a specific task
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the task to add the subtask to
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The title of the subtask
+ *             required:
+ *               - title
+ *     responses:
+ *       201:
+ *         description: The subtask was successfully created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: number
+ *                 title:
+ *                   type: string
+ *                 completed:
+ *                   type: boolean
+ *       500:
+ *         description: Server error or invalid task ID
+ */
 boardTasksRouter.route("/:taskId/subtasks").post(async (req, res) => {
 	const { taskId } = req.params as { taskId: string };
 	const taskIdNumber = Number(taskId);
@@ -141,6 +335,49 @@ boardTasksRouter.route("/:taskId/subtasks").post(async (req, res) => {
 	}
 });
 
+/**
+ * @swagger
+ * /api/tasks/{taskId}/subtasks/{subtaskId}:
+ *   patch:
+ *     summary: Update a subtask's title or completion status
+ *     tags: [Tasks]
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the parent task
+ *       - in: path
+ *         name: subtaskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the subtask to update
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The new title for the subtask
+ *               completed:
+ *                 type: boolean
+ *                 description: The completion status of the subtask
+ *             oneOf:
+ *               - required: [title]
+ *               - required: [completed]
+ *     responses:
+ *       204:
+ *         description: Subtask successfully updated
+ *       400:
+ *         description: Invalid task or subtask ID
+ *       500:
+ *         description: Server error while updating subtask
+ */
 boardTasksRouter
 	.route("/:taskId/subtasks/:subtaskId")
 	.patch(async (req, res) => {
