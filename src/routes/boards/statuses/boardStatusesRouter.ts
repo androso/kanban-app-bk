@@ -1,12 +1,51 @@
 import { Router } from "express";
 import { Task } from "../../../sql-orm/entity/Task";
 import { AppDataSource } from "../../../sql-orm/data-source";
-import {
-	BoardRepository,
-	StatusRepository,
-} from "../boardsRouter";
+import { BoardRepository, StatusRepository } from "../boardsRouter";
 const boardStatusesRouter = Router({ mergeParams: true });
 
+/**
+ * @swagger
+ * /user/boards/{boardId}/statuses:
+ *   post:
+ *     summary: Add a status to a board
+ *     tags:
+ *       - Board Statuses
+ *     parameters:
+ *       - in: path
+ *         name: boardId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the board
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - color
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: "In Progress"
+ *               color:
+ *                 type: string
+ *                 example: "#FF0000"
+ *     responses:
+ *       201:
+ *         description: Status successfully added to board
+ *       404:
+ *         description: Board not found
+ *       409:
+ *         description: Status already exists on this board
+ *       400:
+ *         description: Invalid board ID
+ *     security:
+ *       - cookieAuth: []
+ */
 boardStatusesRouter.route("/").post(async (req, res) => {
 	const { title, color } = req.body;
 	const { boardId } = req.params as { boardId: string };
@@ -55,6 +94,37 @@ boardStatusesRouter.route("/").post(async (req, res) => {
 		}
 	}
 });
+
+/**
+ * @swagger
+ * /user/boards/{boardId}/statuses/{statusId}:
+ *   delete:
+ *     summary: Remove a status from a board
+ *     tags:
+ *       - Board Statuses
+ *     parameters:
+ *       - in: path
+ *         name: boardId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the board
+ *       - in: path
+ *         name: statusId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the status to remove
+ *     responses:
+ *       200:
+ *         description: Status successfully removed from board
+ *       404:
+ *         description: Board or status not found
+ *       400:
+ *         description: Invalid board ID or status ID
+ *     security:
+ *       - cookieAuth: []
+ */
 boardStatusesRouter.route("/:statusId").delete(async (req, res) => {
 	const statusIdNumber = Number(req.params.statusId);
 	const { boardId } = req.params as { boardId: string; statusId: string };
